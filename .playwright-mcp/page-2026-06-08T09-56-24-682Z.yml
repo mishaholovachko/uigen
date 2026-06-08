@@ -1,0 +1,66 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e5]:
+      - heading "React Component Generator" [level=1] [ref=e7]
+      - generic [ref=e9]:
+        - generic [ref=e15]:
+          - generic [ref=e51]:
+            - generic [ref=e54]: Create a user profile card component
+            - img [ref=e57]
+          - generic [ref=e60]:
+            - img [ref=e63]
+            - generic [ref=e68]:
+              - paragraph [ref=e70]: I'll create a user profile card component for you.
+              - separator [ref=e76]
+              - generic [ref=e77]:
+                - paragraph [ref=e78]: "Done! I've created a user profile card component with:"
+                - list [ref=e79]:
+                  - listitem [ref=e80]: Profile header with gradient background
+                  - listitem [ref=e81]: Circular avatar image
+                  - listitem [ref=e82]: User name, title, and location
+                  - listitem [ref=e83]: Bio text
+                  - listitem [ref=e84]: Stats section (Projects, Followers, Following)
+                  - listitem [ref=e85]: Social media icon buttons
+                  - listitem [ref=e86]: Follow and Message action buttons
+                - paragraph [ref=e87]:
+                  - text: The component is fully styled with Tailwindcss and uses sample data. You can easily customize the user data by modifying the
+                  - code [ref=e88]: user
+                  - text: object.
+        - generic [ref=e23]:
+          - textbox "Describe the React component you want to create..." [ref=e24]
+          - button [disabled] [ref=e25]:
+            - img [ref=e26]
+    - separator [ref=e29]
+    - generic [ref=e31]:
+      - generic [ref=e32]:
+        - tablist [ref=e34]:
+          - tab "Preview" [selected] [ref=e35]
+          - tab "Code" [ref=e36]
+        - generic [ref=e37]:
+          - button "Sign In" [ref=e38]
+          - button "Sign Up" [ref=e39]
+      - iframe [ref=e75]:
+        - generic [ref=f2e6]:
+          - img "Sarah Anderson" [ref=f2e8]
+          - heading "Sarah Anderson" [level=2] [ref=f2e9]
+          - paragraph [ref=f2e10]: Product Designer
+          - paragraph [ref=f2e11]: 📍 San Francisco, CA
+          - paragraph [ref=f2e12]: Passionate about creating beautiful and intuitive user experiences
+          - generic [ref=f2e13]:
+            - generic [ref=f2e14]:
+              - paragraph [ref=f2e15]: "24"
+              - paragraph [ref=f2e16]: Projects
+            - generic [ref=f2e17]:
+              - paragraph [ref=f2e18]: 1.2K
+              - paragraph [ref=f2e19]: Followers
+            - generic [ref=f2e20]:
+              - paragraph [ref=f2e21]: "342"
+              - paragraph [ref=f2e22]: Following
+          - generic [ref=f2e23]:
+            - button "𝕏" [ref=f2e24] [cursor=pointer]
+            - button "in" [ref=f2e25] [cursor=pointer]
+            - button "📷" [ref=f2e26] [cursor=pointer]
+          - generic [ref=f2e27]:
+            - button "Follow" [ref=f2e28] [cursor=pointer]
+            - button "Message" [ref=f2e29] [cursor=pointer]
+  - alert [ref=e50]
