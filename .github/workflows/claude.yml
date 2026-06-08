@@ -21,9 +21,9 @@ jobs:
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     permissions:
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
       id-token: write
       actions: read # Required for Claude to read CI results on PRs
     steps:
@@ -34,6 +34,7 @@ jobs:
 
       - name: Project Setup
         run: |
+          mkdir -p src/generated/prisma/runtime
           npm run setup
           npm run dev:daemon
 
