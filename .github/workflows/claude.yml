@@ -34,7 +34,6 @@ jobs:
 
       - name: Project Setup
         run: |
-          mkdir -p src/generated/prisma/runtime
           npm run setup
           npm run dev:daemon
 
