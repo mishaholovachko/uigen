@@ -25,9 +25,15 @@ export function AuthDialog({
 }: AuthDialogProps) {
   const [mode, setMode] = useState<"signin" | "signup">(defaultMode);
 
+  // Re-sync the mode to the requested defaultMode every time the dialog opens,
+  // not only when defaultMode changes. Without this, toggling the mode inside
+  // the dialog and reopening with the same button (e.g. Sign In) would leave the
+  // dialog showing the previously toggled form instead of the one requested.
   useEffect(() => {
-    setMode(defaultMode);
-  }, [defaultMode]);
+    if (open) {
+      setMode(defaultMode);
+    }
+  }, [open, defaultMode]);
 
   const handleSuccess = () => {
     onOpenChange(false);
