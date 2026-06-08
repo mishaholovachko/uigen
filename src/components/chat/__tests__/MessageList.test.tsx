@@ -1,9 +1,8 @@
 import { test, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 import { MessageList } from "../MessageList";
-import type { Message } from "ai";
+import type { UIMessage as Message } from "ai";
 
-// Mock the MarkdownRenderer component
 vi.mock("../MarkdownRenderer", () => ({
   MarkdownRenderer: ({ content }: { content: string }) => <div>{content}</div>,
 }));
@@ -28,7 +27,7 @@ test("MessageList renders user messages", () => {
     {
       id: "1",
       role: "user",
-      content: "Create a button component",
+      parts: [{ type: "text", text: "Create a button component" }],
     },
   ];
 
@@ -42,7 +41,7 @@ test("MessageList renders assistant messages", () => {
     {
       id: "1",
       role: "assistant",
-      content: "I'll help you create a button component.",
+      parts: [{ type: "text", text: "I'll help you create a button component." }],
     },
   ];
 
@@ -58,18 +57,15 @@ test("MessageList renders messages with parts", () => {
     {
       id: "1",
       role: "assistant",
-      content: "",
       parts: [
         { type: "text", text: "Creating your component..." },
         {
-          type: "tool-invocation",
-          toolInvocation: {
-            toolCallId: "asdf",
-            args: {},
-            toolName: "str_replace_editor",
-            state: "result",
-            result: "Success",
-          },
+          type: "dynamic-tool",
+          toolName: "str_replace_editor",
+          toolCallId: "asdf",
+          state: "output-available",
+          input: {},
+          output: "Success",
         },
       ],
     },
@@ -81,28 +77,27 @@ test("MessageList renders messages with parts", () => {
   expect(screen.getByText("str_replace_editor")).toBeDefined();
 });
 
-test("MessageList shows content for assistant message with content", () => {
+test("MessageList shows content for assistant message with text parts", () => {
   const messages: Message[] = [
     {
       id: "1",
       role: "assistant",
-      content: "Generating your component...",
+      parts: [{ type: "text", text: "Generating your component..." }],
     },
   ];
 
   render(<MessageList messages={messages} isLoading={true} />);
 
-  // The component shows the content but not a loading indicator when content is present
   expect(screen.getByText("Generating your component...")).toBeDefined();
   expect(screen.queryByText("Generating...")).toBeNull();
 });
 
-test("MessageList shows loading state for last assistant message without content", () => {
+test("MessageList shows loading state for last assistant message without text parts", () => {
   const messages: Message[] = [
     {
       id: "1",
       role: "assistant",
-      content: "",
+      parts: [],
     },
   ];
 
@@ -116,18 +111,17 @@ test("MessageList doesn't show loading state for non-last messages", () => {
     {
       id: "1",
       role: "assistant",
-      content: "First response",
+      parts: [{ type: "text", text: "First response" }],
     },
     {
       id: "2",
       role: "user",
-      content: "Another request",
+      parts: [{ type: "text", text: "Another request" }],
     },
   ];
 
   render(<MessageList messages={messages} isLoading={true} />);
 
-  // Loading state should not appear because the last message is from user, not assistant
   expect(screen.queryByText("Generating...")).toBeNull();
 });
 
@@ -136,13 +130,11 @@ test("MessageList renders reasoning parts", () => {
     {
       id: "1",
       role: "assistant",
-      content: "",
       parts: [
         { type: "text", text: "Let me analyze this." },
         {
           type: "reasoning",
-          reasoning: "The user wants a button component with specific styling.",
-          details: [],
+          text: "The user wants a button component with specific styling.",
         },
       ],
     },
@@ -161,42 +153,34 @@ test("MessageList renders multiple messages in correct order", () => {
     {
       id: "1",
       role: "user",
-      content: "First user message",
+      parts: [{ type: "text", text: "First user message" }],
     },
     {
       id: "2",
       role: "assistant",
-      content: "First assistant response",
+      parts: [{ type: "text", text: "First assistant response" }],
     },
     {
       id: "3",
       role: "user",
-      content: "Second user message",
+      parts: [{ type: "text", text: "Second user message" }],
     },
     {
       id: "4",
       role: "assistant",
-      content: "Second assistant response",
+      parts: [{ type: "text", text: "Second assistant response" }],
     },
   ];
 
   const { container } = render(<MessageList messages={messages} />);
 
-  // Get all message containers in order
   const messageContainers = container.querySelectorAll(".rounded-xl");
 
-  // Verify we have 4 messages
   expect(messageContainers).toHaveLength(4);
-
-  // Check the content of each message in order
   expect(messageContainers[0].textContent).toContain("First user message");
-  expect(messageContainers[1].textContent).toContain(
-    "First assistant response"
-  );
+  expect(messageContainers[1].textContent).toContain("First assistant response");
   expect(messageContainers[2].textContent).toContain("Second user message");
-  expect(messageContainers[3].textContent).toContain(
-    "Second assistant response"
-  );
+  expect(messageContainers[3].textContent).toContain("Second assistant response");
 });
 
 test("MessageList handles step-start parts", () => {
@@ -204,7 +188,6 @@ test("MessageList handles step-start parts", () => {
     {
       id: "1",
       role: "assistant",
-      content: "",
       parts: [
         { type: "text", text: "Step 1 content" },
         { type: "step-start" },
@@ -217,7 +200,6 @@ test("MessageList handles step-start parts", () => {
 
   expect(screen.getByText("Step 1 content")).toBeDefined();
   expect(screen.getByText("Step 2 content")).toBeDefined();
-  // Check that a separator exists (hr element)
   const container = screen.getByText("Step 1 content").closest(".rounded-xl");
   expect(container?.querySelector("hr")).toBeDefined();
 });
@@ -227,37 +209,31 @@ test("MessageList applies correct styling for user vs assistant messages", () =>
     {
       id: "1",
       role: "user",
-      content: "User message",
+      parts: [{ type: "text", text: "User message" }],
     },
     {
       id: "2",
       role: "assistant",
-      content: "Assistant message",
+      parts: [{ type: "text", text: "Assistant message" }],
     },
   ];
 
   render(<MessageList messages={messages} />);
 
   const userMessage = screen.getByText("User message").closest(".rounded-xl");
-  const assistantMessage = screen
-    .getByText("Assistant message")
-    .closest(".rounded-xl");
+  const assistantMessage = screen.getByText("Assistant message").closest(".rounded-xl");
 
-  // User messages should have blue background
   expect(userMessage?.className).toContain("bg-blue-600");
   expect(userMessage?.className).toContain("text-white");
-
-  // Assistant messages should have white background
   expect(assistantMessage?.className).toContain("bg-white");
   expect(assistantMessage?.className).toContain("text-neutral-900");
 });
 
-test("MessageList handles empty content with parts", () => {
+test("MessageList renders text from parts", () => {
   const messages: Message[] = [
     {
       id: "1",
       role: "assistant",
-      content: "", // Empty content but has parts
       parts: [{ type: "text", text: "This is from parts" }],
     },
   ];
@@ -272,7 +248,6 @@ test("MessageList shows loading for assistant message with empty parts", () => {
     {
       id: "1",
       role: "assistant",
-      content: "",
       parts: [],
     },
   ];
@@ -281,7 +256,6 @@ test("MessageList shows loading for assistant message with empty parts", () => {
     <MessageList messages={messages} isLoading={true} />
   );
 
-  // Check that exactly one "Generating..." text appears
   const loadingText = container.querySelectorAll(".text-neutral-500");
   const generatingElements = Array.from(loadingText).filter(
     (el) => el.textContent === "Generating..."
